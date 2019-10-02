@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">PhoneNumbersApp</string>
+    <plurals name="numberOfContactsFound">
+        <item quantity="one">Найден %d контакт.</item>
+        <item quantity="few">Найдено %d контакта.</item>
+        <item quantity="other">Найдено %d контактов.</item>
+    </plurals>
 </resources>

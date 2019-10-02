@@ -28,35 +28,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         getPermissionToReadUserContacts();
-
-        if (!permissionsGiven[READ_CONTACTS_PERMISSION_NUMBER]) {
-            Toast
-                .makeText(
-                    this@MainActivity,
-                    "Permission to use contacts wasn't given.",
-                    Toast.LENGTH_SHORT
-                )
-                .show()
-        } else {
-
-            viewManager = LinearLayoutManager(this)
-            viewAdapter = UserAdapter(fetchAllContacts()) {
-                Toast
-                    .makeText(
-                        this@MainActivity,
-                        "Clicked on user $it!",
-                        Toast.LENGTH_SHORT
-                    )
-                    .show()
-            }
-
-            recyclerView = findViewById<RecyclerView>(R.id.my_recycler_view).apply {
-                layoutManager = viewManager
-                adapter = viewAdapter
-            }
-        }
-
     }
+
 
     data class Contact(val name: String, val phoneNumber: String)
 
@@ -78,14 +51,15 @@ class MainActivity : AppCompatActivity() {
                     val phoneNumber =
                         cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
                             ?: "N/A"
-                    Toast
-                        .makeText(
-                            this@MainActivity,
-                            "Hallou dyadya!!",
-                            Toast.LENGTH_SHORT
-                        ).show()
                     builder.add(Contact(name, phoneNumber))
                 }
+
+                Toast
+                    .makeText(
+                        this@MainActivity,
+                        resources.getQuantityString(R.plurals.numberOfContactsFound, builder.size, builder.size),
+                        Toast.LENGTH_SHORT
+                    ).show()
 
                 return builder
             }
@@ -145,6 +119,8 @@ class MainActivity : AppCompatActivity() {
                 arrayOf(READ_CONTACTS),
                 READ_CONTACTS_PERMISSIONS_REQUEST
             )
+        } else {
+            layContactsList()
         }
     }
 
@@ -156,7 +132,7 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == READ_CONTACTS_PERMISSIONS_REQUEST) {
             if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Read Contacts permission granted", Toast.LENGTH_SHORT).show()
-                permissionsGiven[READ_CONTACTS_PERMISSION_NUMBER] = true;
+                layContactsList()
             } else {
                 val showRationale =
                     shouldShowRequestPermissionRationale(READ_CONTACTS)
@@ -167,6 +143,24 @@ class MainActivity : AppCompatActivity() {
                         .show()
                 }
             }
+        }
+    }
+
+    fun layContactsList(){
+        viewManager = LinearLayoutManager(this)
+        viewAdapter = UserAdapter(fetchAllContacts()) {
+            Toast
+                .makeText(
+                    this@MainActivity,
+                    "Clicked on user $it!",
+                    Toast.LENGTH_SHORT
+                )
+                .show()
+        }
+
+        recyclerView = findViewById<RecyclerView>(R.id.my_recycler_view).apply {
+            layoutManager = viewManager
+            adapter = viewAdapter
         }
     }
 

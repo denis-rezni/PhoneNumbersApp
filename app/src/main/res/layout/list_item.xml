@@ -8,14 +8,16 @@
     <TextView
         android:id="@+id/user_name"
         android:textSize="40sp"
-        android:gravity="center"
+        android:gravity="start"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <TextView
         android:id="@+id/user_phone"
         android:textSize="20sp"
-        android:gravity="center"
+        android:gravity="start"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>
