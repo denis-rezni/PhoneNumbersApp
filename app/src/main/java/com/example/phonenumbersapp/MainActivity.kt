@@ -2,7 +2,9 @@ package com.example.phonenumbersapp
 
 import android.Manifest.permission.READ_CONTACTS
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.view.LayoutInflater
@@ -21,8 +23,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
-    private val permissionNumber = 1
-    private var permissionsGiven: BooleanArray = BooleanArray(permissionNumber)
+
+    companion object{
+        private const val READ_CONTACTS_PERMISSIONS_REQUEST = 1
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +61,11 @@ class MainActivity : AppCompatActivity() {
                 Toast
                     .makeText(
                         this@MainActivity,
-                        resources.getQuantityString(R.plurals.numberOfContactsFound, builder.size, builder.size),
+                        resources.getQuantityString(
+                            R.plurals.numberOfContactsFound,
+                            builder.size,
+                            builder.size
+                        ),
                         Toast.LENGTH_SHORT
                     ).show()
 
@@ -105,8 +113,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private val READ_CONTACTS_PERMISSIONS_REQUEST = 1
-    private val READ_CONTACTS_PERMISSION_NUMBER = 0
 
     fun getPermissionToReadUserContacts() {
         if (ContextCompat.checkSelfPermission(
@@ -134,28 +140,18 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Read Contacts permission granted", Toast.LENGTH_SHORT).show()
                 layContactsList()
             } else {
-                val showRationale =
-                    shouldShowRequestPermissionRationale(READ_CONTACTS)
-
-                if (showRationale) {
-                } else {
-                    Toast.makeText(this, "Read Contacts permission denied", Toast.LENGTH_SHORT)
-                        .show()
-                }
+                Toast.makeText(this, "Read Contacts permission denied", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
 
-    fun layContactsList(){
+    fun layContactsList() {
         viewManager = LinearLayoutManager(this)
         viewAdapter = UserAdapter(fetchAllContacts()) {
-            Toast
-                .makeText(
-                    this@MainActivity,
-                    "Clicked on user $it!",
-                    Toast.LENGTH_SHORT
-                )
-                .show()
+            val intent = Intent(Intent.ACTION_DIAL)
+            intent.data = Uri.parse("tel:${it.phoneNumber}")
+            startActivity(intent)
         }
 
         recyclerView = findViewById<RecyclerView>(R.id.my_recycler_view).apply {
